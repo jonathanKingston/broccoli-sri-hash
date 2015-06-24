@@ -1,6 +1,6 @@
 {
   "name": "broccoli-sri-hash",
-  "version": "0.0.1-beta",
+  "version": "0.0.2-beta",
   "description": "Generates SRI hashes for html files",
   "main": "index.js",
   "scripts": {
@@ -8,7 +8,7 @@
   },
   "author": "Jonathan Kingston",
   "license": "MIT",
-  "devDependencies": {
+  "dependencies": {
     "broccoli": "^0.16.3",
     "broccoli-filter": "^0.1.14",
     "sri-toolbox": "^0.1.3"
