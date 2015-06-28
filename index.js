@@ -72,7 +72,7 @@ SRIHashAssets.prototype.processFile = function (srcDir, destDir, relativePath) {
 
   var fileContent = fs.readFileSync(srcDir + '/' + relativePath);
   var self = this;
-  fileContent = addSRI(fileContent.toString(), destDir);
+  fileContent = addSRI(fileContent.toString(), srcDir);
 
   return Promise.resolve().then(function () {
     var outputPath = self.getDestFilePath(relativePath);
