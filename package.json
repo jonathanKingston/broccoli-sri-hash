@@ -1,6 +1,6 @@
 {
   "name": "broccoli-sri-hash",
-  "version": "0.0.4-beta",
+  "version": "0.0.5-beta",
   "description": "Generates SRI hashes for html files",
   "main": "index.js",
   "scripts": {
@@ -12,6 +12,6 @@
   "dependencies": {
     "broccoli": "^0.16.3",
     "broccoli-filter": "^0.1.14",
-    "sri-toolbox": "sri-toolbox@master"
+    "sri-toolbox": "https://github.com/neftaly/npm-sri-toolbox.git#master"
   }
 }
