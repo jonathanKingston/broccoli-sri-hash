@@ -7,7 +7,10 @@
     "test": "rm -rf tmp/output/ && broccoli build tmp/output && mocha"
   },
   "author": "Jonathan Kingston",
-  "repository": "https://github.com/jonathanKingston/broccoli-sri-hash.git",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jonathanKingston/broccoli-sri-hash.git"
+  },
   "license": "MIT",
   "dependencies": {
     "broccoli": "^0.16.3",
