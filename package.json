@@ -4,7 +4,7 @@
   "description": "Generates SRI hashes for html files",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "rm -rf tmp/output/ && broccoli build tmp/output && mocha"
   },
   "author": "Jonathan Kingston",
   "repository": "https://github.com/jonathanKingston/broccoli-sri-hash.git",
@@ -13,5 +13,9 @@
     "broccoli": "^0.16.3",
     "broccoli-filter": "^0.1.14",
     "sri-toolbox": "https://github.com/neftaly/npm-sri-toolbox.git#master"
+  },
+  "devDependencies": {
+    "chai": "^3.0.0",
+    "mocha": "^2.2.5"
   }
 }
