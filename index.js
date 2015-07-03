@@ -49,9 +49,10 @@ SRIHashAssets.prototype.readFile = function readFile(dirname, file) {
   return assetSource;
 }
 
-SRIHashAssets.prototype.generateIntegrity = function generateIntegrity(output, file, dirname) {
+SRIHashAssets.prototype.generateIntegrity = function generateIntegrity(output, file, dirname, external) {
   var assetSource = this.readFile(dirname, file);
   var integrity;
+  var append;
 
   if (assetSource === null) {
     return output;
@@ -61,10 +62,14 @@ SRIHashAssets.prototype.generateIntegrity = function generateIntegrity(output, f
     algorithms: ['sha256', 'sha512'],
   }, assetSource);
 
-  return output.replace(/\/?[>]$/, ' integrity="' + integrity + '" />');
-};
+  append = ' integrity="' + integrity + '"';
 
-var prefix = 'https://subdomain.cloudfront.net/';
+  if (external && this.options.crossorigin) {
+    append = append + ' crossorigin="' + this.options.crossorigin + '" ';
+  }
+
+  return output.replace(/\/?[>]$/, append + '/>');
+};
 
 SRIHashAssets.prototype.checkExternal = function checkExternal(output, file, dirname) {
   var md5Check = /^(.*)[-]([a-z0-9]{32})([.].*)$/;
@@ -93,7 +98,7 @@ SRIHashAssets.prototype.checkExternal = function checkExternal(output, file, dir
   }
   md5sum.update(assetSource);
   if (md5Matches[2] === md5sum.digest('hex')) {
-    return this.generateIntegrity(output, filePath, dirname);
+    return this.generateIntegrity(output, filePath, dirname, true);
   }
   return output;
 }
