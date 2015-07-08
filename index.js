@@ -50,6 +50,7 @@ SRIHashAssets.prototype.readFile = function readFile(dirname, file) {
 }
 
 SRIHashAssets.prototype.generateIntegrity = function generateIntegrity(output, file, dirname, external) {
+  var crossoriginCheck = new RegExp('crossorigin=["\']([^"\']+)["\']');
   var assetSource = this.readFile(dirname, file);
   var integrity;
   var append;
@@ -65,7 +66,9 @@ SRIHashAssets.prototype.generateIntegrity = function generateIntegrity(output, f
   append = ' integrity="' + integrity + '"';
 
   if (external && this.options.crossorigin) {
-    append = append + ' crossorigin="' + this.options.crossorigin + '" ';
+    if (!crossoriginCheck.test(output)) {
+      append = append + ' crossorigin="' + this.options.crossorigin + '" ';
+    }
   }
 
   return output.replace(/\/?[>]$/, append + '/>');
