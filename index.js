@@ -81,7 +81,7 @@ SRIHashAssets.prototype.checkExternal = function checkExternal(output, file, dir
   var assetSource;
   var filePath;
 
-  if (!('prefix' in this.options) || md5Matches === null) {
+  if (!('prefix' in this.options) || !('crossorigin' in this.options) || md5Matches === null) {
     return output;
   }
 
