@@ -6,6 +6,7 @@ This plugin looks at an apps html files to rewrite their content with integrity 
 
 ### Options
 
+- **origin** - if `crossorigin` isn't specified but `prepend` is it will add an integrity if `prepend` starts with `origin`
 - **crossorigin** - adds a crossorigin attribute to script and link elements
     - This is **required** for CORS resources values are:
         - `use-credentials`

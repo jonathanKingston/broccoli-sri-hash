@@ -13,6 +13,14 @@ function SRIHashAssets(inputTree, options) {
   this.options = options || {};
   this.context = this.options.context || {};
   this.inputTree = inputTree;
+
+  if ('origin' in this.options) {
+    if ('prefix' in this.options && !('crossorigin' in this.options)) {
+      if (this.options.prefix.indexOf(this.options.origin, 0) === 0) {
+        this.options.crossorigin = false;
+      }
+    }
+  }
 }
 
 SRIHashAssets.prototype = Object.create(Filter.prototype);
