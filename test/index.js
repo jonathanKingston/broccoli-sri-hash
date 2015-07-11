@@ -11,4 +11,9 @@ describe('broccoli-sri-hash', function () {
 
     assert.equal(fileTmpContents.trim(), fileContents.trim());
   });
+
+  it('Must lint', function () {
+    var fileTmpContents = fs.readFileSync('tmp/lint-out', {encoding: 'utf8'});
+    assert.notMatch(fileTmpContents, /[0-9]+\s+problems?\s\([0-9]+\serrors?,\s[0-9]+\swarnings?\)/)
+  });
 });

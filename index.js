@@ -1,8 +1,6 @@
-'use strict';
 var Filter = require('broccoli-filter');
-var sriToolbox = require("sri-toolbox");
+var sriToolbox = require('sri-toolbox');
 var fs = require('fs');
-var path = require('path');
 var crypto = require('crypto');
 
 function SRIHashAssets(inputTree, options) {
@@ -30,32 +28,35 @@ SRIHashAssets.prototype.extensions = ['html'];
 SRIHashAssets.prototype.targetExtension = 'html';
 
 SRIHashAssets.prototype.addSRI = function addSRI(string, file) {
-  var self = this;
+  var that = this;
   var scriptCheck = new RegExp('<script[^>]*src=["\']([^"]*)["\'][^>]*>', 'g');
   var linkCheck = new RegExp('<link[^>]*href=["\']([^"]*)["\'][^>]*>', 'g');
   var srcCheck = new RegExp('src=["\']([^"\']+)["\']');
   var hrefCheck = new RegExp('href=["\']([^"\']+)["\']');
 
-  return string.replace(scriptCheck, function (match) {
+  return string.replace(scriptCheck, function srcMatch(match) {
     var src = match.match(srcCheck);
     var filePath = src[1];
-    return self.mungeOutput(match, filePath, file);
-  }).replace(linkCheck, function (match) {
+
+    return that.mungeOutput(match, filePath, file);
+  }).replace(linkCheck, function hrefMatch(match) {
     var href = match.match(hrefCheck);
     var filePath = href[1];
-    return self.mungeOutput(match, filePath, file);
+
+    return that.mungeOutput(match, filePath, file);
   });
 };
 
 SRIHashAssets.prototype.readFile = function readFile(dirname, file) {
   var assetSource;
+
   try {
     assetSource = fs.readFileSync(dirname + '/' + file).toString();
   } catch(e) {
     return null;
   }
   return assetSource;
-}
+};
 
 SRIHashAssets.prototype.generateIntegrity = function generateIntegrity(output, file, dirname, external) {
   var crossoriginCheck = new RegExp('crossorigin=["\']([^"\']+)["\']');
@@ -68,7 +69,7 @@ SRIHashAssets.prototype.generateIntegrity = function generateIntegrity(output, f
   }
 
   integrity = sriToolbox.generate({
-    algorithms: ['sha256', 'sha512'],
+    algorithms: ['sha256', 'sha512']
   }, assetSource);
 
   append = ' integrity="' + integrity + '"';
@@ -112,29 +113,31 @@ SRIHashAssets.prototype.checkExternal = function checkExternal(output, file, dir
     return this.generateIntegrity(output, filePath, dirname, true);
   }
   return output;
-}
+};
 
 SRIHashAssets.prototype.mungeOutput = function mungeOutput(output, filePath, file) {
   var integrityCheck = new RegExp('integrity=["\']');
+  var newOutput = output;
 
   if (/^https?:\/\//.test(filePath)) {
     return this.checkExternal(output, filePath, file);
   }
   if (!(integrityCheck.test(output))) {
-    output = this.generateIntegrity(output, filePath, file);
+    newOutput = this.generateIntegrity(output, filePath, file);
   }
-  return output;
-}
+  return newOutput;
+};
 
-SRIHashAssets.prototype.processFile = function (srcDir, destDir, relativePath) {
-  this._srcDir = srcDir;
-
+SRIHashAssets.prototype.processFile = function processFile(srcDir, destDir, relativePath) {
   var fileContent = fs.readFileSync(srcDir + '/' + relativePath);
-  var self = this;
+  var that = this;
+
+  this._srcDir = srcDir;
   fileContent = this.addSRI(fileContent.toString(), srcDir);
 
-  return Promise.resolve().then(function () {
-    var outputPath = self.getDestFilePath(relativePath);
+  return Promise.resolve().then(function writeFileOutput() {
+    var outputPath = that.getDestFilePath(relativePath);
+
     fs.writeFileSync(destDir + '/' + outputPath, fileContent);
   });
 };

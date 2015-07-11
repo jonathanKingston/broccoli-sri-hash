@@ -4,7 +4,8 @@
   "description": "Generates SRI hashes for html files",
   "main": "index.js",
   "scripts": {
-    "test": "rm -rf tmp/output/ && broccoli build tmp/output && mocha"
+    "lint": "eslint index.js",
+    "test": "rm -rf tmp/output/; rm -rf tmp/lint-out && npm run lint > tmp/lint-out; broccoli build tmp/output && mocha"
   },
   "author": "Jonathan Kingston",
   "repository": {
@@ -19,6 +20,7 @@
   },
   "devDependencies": {
     "chai": "^3.0.0",
+    "eslint-config-nightmare-mode": "0.0.3",
     "mocha": "^2.2.5"
   }
 }
