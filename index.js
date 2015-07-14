@@ -31,6 +31,7 @@ SRIHashAssets.prototype.addSRI = function addSRI(string, file) {
   var that = this;
   var scriptCheck = new RegExp('<script[^>]*src=["\']([^"]*)["\'][^>]*>', 'g');
   var linkCheck = new RegExp('<link[^>]*href=["\']([^"]*)["\'][^>]*>', 'g');
+  var styleCheck = new RegExp('rel=["\'][^"]*stylesheet[^"]*["\']');
   var srcCheck = new RegExp('src=["\']([^"\']+)["\']');
   var hrefCheck = new RegExp('href=["\']([^"\']+)["\']');
 
@@ -41,7 +42,13 @@ SRIHashAssets.prototype.addSRI = function addSRI(string, file) {
     return that.mungeOutput(match, filePath, file);
   }).replace(linkCheck, function hrefMatch(match) {
     var href = match.match(hrefCheck);
+    var isStyle = styleCheck.test(match);
     var filePath = href[1];
+
+
+    if (!isStyle) {
+      return match;
+    }
 
     return that.mungeOutput(match, filePath, file);
   });
