@@ -12,7 +12,7 @@ cache:
 before_install:
   - "npm config set spin false"
   - "npm install -g npm@^2"
-  - "npm install -g broccoli"
+  - "npm install -g broccoli-cli"
 
 install:
   - npm install
