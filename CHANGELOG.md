@@ -1,2 +1,11 @@
-# 0.2.1
+# 1.0.0
+- Added in build steps and badges
+
+# 0.2.4
+- Made code only work with stylesheet link elements
+
+# 0.2.3
+- Upgrade to the latest toolbox
+
+# 0.2.2
 - Added origin attribute checking to simplify interface
