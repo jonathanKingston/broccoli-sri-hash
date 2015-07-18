@@ -1,6 +1,8 @@
 # SRI for broccoli
+[![Build Status][travis-badge]][travis-badge-url]
 [![npm status](http://img.shields.io/npm/v/broccoli-sri-hash.svg)](https://www.npmjs.org/package/broccoli-sri-hash)
 [![dependency status](https://david-dm.org/jonathanKingston/broccoli-sri-hash.svg)](https://david-dm.org/jonathanKingston/broccoli-sri-hash)
+[![Build status](https://ci.appveyor.com/api/projects/status/tips9rd3fjobocm2?svg=true)](https://ci.appveyor.com/project/jonathanKingston/broccoli-sri-hash)
 
 This plugin looks at an apps html files to rewrite their content with integrity attributes.
 
