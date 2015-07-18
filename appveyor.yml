@@ -1,8 +1,5 @@
 version: "{build}"
 
-build:
-  verbosity: minimal
-
 # Test against these versions of Node.js.
 environment:
   matrix:
