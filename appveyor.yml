@@ -3,6 +3,11 @@ version: "{build}"
 build:
   verbosity: minimal
 
+# Test against these versions of Node.js.
+environment:
+  matrix:
+    - nodejs_version: "0.12"
+
 install:
   # Get the latest stable version of Node 0.STABLE.latest
   - ps: Install-Product node $env:nodejs_version
@@ -20,3 +25,6 @@ test_script:
   # Output useful info for debugging.
   - npm version
   - cmd: npm run test-all
+
+# Don't actually build.
+build: off
