@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "lint": "eslint index.js",
-    "test": "rm -rf tmp/output/; rm -rf tmp/lint-out && npm run lint > tmp/lint-out; broccoli build tmp/output && mocha"
+    "test": "mkdir tmp; rm -rf tmp/output/; rm -rf tmp/lint-out && npm run lint > tmp/lint-out; broccoli build tmp/output && mocha"
   },
   "author": "Jonathan Kingston",
   "repository": {
