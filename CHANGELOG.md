@@ -1,3 +1,6 @@
+# 1.0.1
+- Changed code to work with 0.2.x broccoli-filter
+
 # 1.0.0
 - Added in build steps and badges
 

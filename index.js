@@ -3,14 +3,14 @@ var sriToolbox = require('sri-toolbox');
 var fs = require('fs');
 var crypto = require('crypto');
 
-function SRIHashAssets(inputTree, options) {
+function SRIHashAssets(inputNode, options) {
   if (!(this instanceof SRIHashAssets)) {
-    return new SRIHashAssets(inputTree, options);
+    return new SRIHashAssets(inputNode, options);
   }
 
   this.options = options || {};
   this.context = this.options.context || {};
-  this.inputTree = inputTree;
+  Filter.call(this, inputNode);
 
   if ('origin' in this.options) {
     if ('prefix' in this.options && !('crossorigin' in this.options)) {
