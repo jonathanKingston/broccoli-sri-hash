@@ -1,5 +1,6 @@
 # 1.0.1
 - Changed code to work with 0.2.x broccoli-filter
+- Made stateless checks be global to remove recalculation
 
 # 1.0.0
 - Added in build steps and badges

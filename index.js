@@ -2,6 +2,9 @@ var Filter = require('broccoli-filter');
 var sriToolbox = require('sri-toolbox');
 var fs = require('fs');
 var crypto = require('crypto');
+var styleCheck = /rel=["\'][^"]*stylesheet[^"]*["\']/;
+var srcCheck = /src=["\']([^"\']+)["\']/;
+var hrefCheck = /href=["\']([^"\']+)["\']/;
 
 function SRIHashAssets(inputNode, options) {
   if (!(this instanceof SRIHashAssets)) {
@@ -31,9 +34,6 @@ SRIHashAssets.prototype.addSRI = function addSRI(string, file) {
   var that = this;
   var scriptCheck = new RegExp('<script[^>]*src=["\']([^"]*)["\'][^>]*>', 'g');
   var linkCheck = new RegExp('<link[^>]*href=["\']([^"]*)["\'][^>]*>', 'g');
-  var styleCheck = new RegExp('rel=["\'][^"]*stylesheet[^"]*["\']');
-  var srcCheck = new RegExp('src=["\']([^"\']+)["\']');
-  var hrefCheck = new RegExp('href=["\']([^"\']+)["\']');
 
   return string.replace(scriptCheck, function srcMatch(match) {
     var src = match.match(srcCheck);
