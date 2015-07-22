@@ -2,9 +2,9 @@ var Filter = require('broccoli-filter');
 var sriToolbox = require('sri-toolbox');
 var fs = require('fs');
 var crypto = require('crypto');
-var styleCheck = /rel=["\'][^"]*stylesheet[^"]*["\']/;
-var srcCheck = /src=["\']([^"\']+)["\']/;
-var hrefCheck = /href=["\']([^"\']+)["\']/;
+var styleCheck = /\srel=["\'][^"]*stylesheet[^"]*["\']/;
+var srcCheck = /\ssrc=["\']([^"\']+)["\']/;
+var hrefCheck = /\shref=["\']([^"\']+)["\']/;
 
 function SRIHashAssets(inputNode, options) {
   if (!(this instanceof SRIHashAssets)) {
@@ -37,18 +37,26 @@ SRIHashAssets.prototype.addSRI = function addSRI(string, file) {
 
   return string.replace(scriptCheck, function srcMatch(match) {
     var src = match.match(srcCheck);
-    var filePath = src[1];
+    var filePath;
+
+    if (!src) {
+      return match;
+    }
+
+    filePath = src[1];
 
     return that.mungeOutput(match, filePath, file);
   }).replace(linkCheck, function hrefMatch(match) {
     var href = match.match(hrefCheck);
     var isStyle = styleCheck.test(match);
-    var filePath = href[1];
+    var filePath;
 
 
-    if (!isStyle) {
+    if (!isStyle || !href) {
       return match;
     }
+
+    filePath = href[1];
 
     return that.mungeOutput(match, filePath, file);
   });
