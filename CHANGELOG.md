@@ -1,3 +1,6 @@
+# 1.0.3
+- Fixing extra closing slash and whitespace in output
+
 # 1.0.2
 - Changing packages to be semver compatible
 
