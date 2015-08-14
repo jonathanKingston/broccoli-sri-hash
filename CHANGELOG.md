@@ -1,3 +1,6 @@
+# 1.0.4
+- Make the filter dependency in the dependency setup
+
 # 1.0.3
 - Fixing extra closing slash and whitespace in output
 - Update to latest broccoli-filter
