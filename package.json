@@ -1,6 +1,6 @@
 {
   "name": "broccoli-sri-hash",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "description": "Generates SRI hashes for html files",
   "main": "index.js",
   "scripts": {

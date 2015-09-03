@@ -1,3 +1,6 @@
+# 1.1.0
+- Added in a temporary fix for Unicode encoding issue which disables the code if the library detects unicode.
+
 # 1.0.4
 - Make the filter dependency in the dependency setup
 
