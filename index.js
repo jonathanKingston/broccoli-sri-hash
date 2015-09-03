@@ -15,6 +15,8 @@ function SRIHashAssets(inputNode, options) {
   this.context = this.options.context || {};
   Filter.call(this, inputNode);
 
+  this.options.paranoiaCheck = this.options.paranoiaCheck || true;
+
   if ('origin' in this.options) {
     if ('prefix' in this.options && !('crossorigin' in this.options)) {
       if (this.options.prefix.indexOf(this.options.origin, 0) === 0) {
@@ -73,6 +75,31 @@ SRIHashAssets.prototype.readFile = function readFile(dirname, file) {
   return assetSource;
 };
 
+/*
+  This check is always called (at the moment).
+  If 'paranoiaCheck' is enabled then it will check a file only contains ASCII characters
+    - will return true if paranoiaCheck is disabled
+    - will return true if ASCII only
+    - will return false if non ASCII chars are present
+  This relates to an issue that is either within OpenSSL or Chrome itself due to an encoding issue:
+   https://code.google.com/p/chromium/issues/detail?id=527286
+*/
+SRIHashAssets.prototype.paranoiaCheck = function paranoiaCheck(assetSource) {
+  var i;
+  var checkResult = true;
+
+  if (this.options.paranoiaCheck === true) {
+    for (i = 0; i < assetSource.length; i++) {
+      if (assetSource.charCodeAt(i) > 127) {
+        checkResult = false;
+        break;
+      }
+    }
+  }
+
+  return checkResult;
+};
+
 SRIHashAssets.prototype.generateIntegrity = function generateIntegrity(output, file, dirname, external) {
   var crossoriginCheck = new RegExp('crossorigin=["\']([^"\']+)["\']');
   var assetSource = this.readFile(dirname, file);
@@ -84,6 +111,11 @@ SRIHashAssets.prototype.generateIntegrity = function generateIntegrity(output, f
   if (assetSource === null) {
     return output;
   }
+
+  if (this.paranoiaCheck(assetSource) === false) {
+    return output;
+  }
+
 
   integrity = sriToolbox.generate({
     algorithms: ['sha256', 'sha512']
