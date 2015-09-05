@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "lint": "eslint index.js",
-    "test": "mkdir tmp; rm -rf tmp/output/; rm -rf tmp/lint-out && npm run lint > tmp/lint-out; broccoli build tmp/output && mocha"
+    "test": "rm -rf tmp && mkdir tmp && npm run lint > tmp/lint-out && broccoli build tmp/output && mocha"
   },
   "author": "Jonathan Kingston",
   "repository": {
@@ -19,7 +19,9 @@
     "sri-toolbox": "^0.2.0"
   },
   "devDependencies": {
+    "broccoli-cli": "^1.0.0",
     "chai": "^3.0.0",
+    "eslint": "^1.0.0",
     "eslint-config-nightmare-mode": "0.1.0",
     "mocha": "^2.2.5"
   }
