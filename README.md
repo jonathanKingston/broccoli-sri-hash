@@ -1,5 +1,6 @@
 # SRI for broccoli
 [![build status](https://secure.travis-ci.org/jonathanKingston/broccoli-sri-hash.svg)](http://travis-ci.org/jonathanKingston/broccoli-sri-hash)
+[![build status](https://ci.appveyor.com/api/projects/status/github/jonathanKingston/broccoli-sri-hash?branch=master&svg=true)](https://ci.appveyor.com/project/jonathanKingston/broccoli-sri-hash/branch/master)
 [![npm status](http://img.shields.io/npm/v/broccoli-sri-hash.svg)](https://www.npmjs.org/package/broccoli-sri-hash)
 [![dependency status](https://david-dm.org/jonathanKingston/broccoli-sri-hash.svg)](https://david-dm.org/jonathanKingston/broccoli-sri-hash)
 
