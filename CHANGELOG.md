@@ -1,3 +1,10 @@
+# 1.1.1
+- @kellyselden fixes for node 0.10
+  -  windows cmd fix
+  -  adding promise polyfill for node 0.10
+  -  adding appveyor badge
+  -  mirroring ember-cli travis envs
+
 # 1.1.0
 - Added in a temporary fix for Unicode encoding issue which disables the code if the library detects unicode.
 
