@@ -5,6 +5,7 @@ var crypto = require('crypto');
 var styleCheck = /\srel=["\'][^"]*stylesheet[^"]*["\']/;
 var srcCheck = /\ssrc=["\']([^"\']+)["\']/;
 var hrefCheck = /\shref=["\']([^"\']+)["\']/;
+var Promise = require('rsvp').Promise; // node 0.10
 
 function SRIHashAssets(inputNode, options) {
   if (!(this instanceof SRIHashAssets)) {

@@ -16,6 +16,7 @@
   "dependencies": {
     "broccoli": "^0.16.3",
     "broccoli-filter": "^1.1.0",
+    "rsvp": "^3.0.0",
     "sri-toolbox": "^0.2.0"
   },
   "devDependencies": {
