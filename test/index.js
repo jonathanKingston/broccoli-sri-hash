@@ -4,6 +4,7 @@ var fs = require('fs');
 var broccoli = require('broccoli');
 var plugin = require('../');
 var lint = require('mocha-eslint');
+var walkSync = require('walk-sync');
 
 function file(path) {
   return fs.readFileSync(path,  'UTF-8').trim();;
@@ -29,6 +30,15 @@ describe('broccoli-sri-hash', function () {
       var expected = file('test/fixtures/output/test.html');
 
       assert.equal(actual, expected);
+
+      assert.deepEqual(walkSync(output.directory), [
+        'moment-with-locales.min.js',
+        'omg.png',
+        'other.css',
+        'test.html',
+        'thing.js',
+        'unicode-chars.js'
+      ]);
     });
   });
 
@@ -39,11 +49,27 @@ describe('broccoli-sri-hash', function () {
       // mutate input File
       fs.writeFileSync('test/fixtures/input/other.css', '* { display: none; }');
 
+      assert.deepEqual(walkSync(output.directory), [
+        'moment-with-locales.min.js',
+        'omg.png',
+        'other.css',
+        'test.html',
+        'thing.js',
+        'unicode-chars.js'
+      ]);
       return builder.build();
     }).then(function(output) {
       var actual = file(output.directory + '/test.html');
       var expected = file('test/fixtures/output2/test.html');
 
+      assert.deepEqual(walkSync(output.directory), [
+        'moment-with-locales.min.js',
+        'omg.png',
+        'other.css',
+        'test.html',
+        'thing.js',
+        'unicode-chars.js'
+      ]);
       assert.equal(actual, expected);
     }).finally(function() {
       fs.writeFileSync(pathToMutate, originalContent);
