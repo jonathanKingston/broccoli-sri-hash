@@ -16,6 +16,7 @@
   "license": "MIT",
   "dependencies": {
     "broccoli-caching-writer": "^2.2.0",
+    "mkdirp": "^0.5.1",
     "rsvp": "^3.1.0",
     "snyk": "^1.1.0",
     "sri-toolbox": "^0.2.0",
