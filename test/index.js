@@ -79,8 +79,10 @@ describe('broccoli-sri-hash', function () {
     });
   });
 
-  lint([
-    'index.js',
-    'tests/index.js'
-  ]);
 });
+
+
+lint([
+  'index.js',
+  'tests/index.js'
+]);
