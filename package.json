@@ -15,10 +15,10 @@
   "license": "MIT",
   "dependencies": {
     "broccoli": "^0.16.3",
-    "broccoli-filter": "^1.2.2",
+    "broccoli-caching-writer": "^2.2.0",
     "rsvp": "^3.0.0",
-    "sri-toolbox": "^0.2.0",
-    "snyk": "^1.1.0"
+    "snyk": "^1.1.0",
+    "sri-toolbox": "^0.2.0"
   },
   "devDependencies": {
     "broccoli-cli": "^1.0.0",

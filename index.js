@@ -1,4 +1,4 @@
-var Filter = require('broccoli-filter');
+var CachingWriter = require('broccoli-caching-writer');
 var sriToolbox = require('sri-toolbox');
 var fs = require('fs');
 var crypto = require('crypto');
@@ -7,14 +7,25 @@ var srcCheck = /\ssrc=["\']([^"\']+)["\']/;
 var hrefCheck = /\shref=["\']([^"\']+)["\']/;
 var Promise = require('rsvp').Promise; // node 0.10
 
-function SRIHashAssets(inputNode, options) {
+function SRIHashAssets(inputNodes, options) {
   if (!(this instanceof SRIHashAssets)) {
-    return new SRIHashAssets(inputNode, options);
+    return new SRIHashAssets(inputNodes, options);
   }
 
   this.options = options || {};
   this.context = this.options.context || {};
-  Filter.call(this, inputNode);
+  var nodes = inputNodes;
+  if (!Array.isArray(nodes)) {
+    nodes = [nodes];
+  }
+
+  CachingWriter.call(this, nodes, {
+    cacheInclude: [
+      /(.*)\.html$/,
+      /(.*)\.js$/,
+      /(.*)\.css$/
+    ]
+  });
 
   this.options.paranoiaCheck = this.options.paranoiaCheck || true;
 
@@ -27,11 +38,12 @@ function SRIHashAssets(inputNode, options) {
   }
 }
 
-SRIHashAssets.prototype = Object.create(Filter.prototype);
+SRIHashAssets.prototype = Object.create(CachingWriter.prototype);
 SRIHashAssets.prototype.constructor = SRIHashAssets;
-
+/*
 SRIHashAssets.prototype.extensions = ['html'];
 SRIHashAssets.prototype.targetExtension = 'html';
+*/
 
 SRIHashAssets.prototype.addSRI = function addSRI(string, file) {
   var that = this;
@@ -195,6 +207,10 @@ SRIHashAssets.prototype.processFile = function processFile(srcDir, destDir, rela
 
     fs.writeFileSync(destDir + '/' + outputPath, fileContent);
   });
+};
+
+SRIHashAssets.prototype.build = function () {
+  // TODO call processFile here this.listEntries();
 };
 
 module.exports = SRIHashAssets;
