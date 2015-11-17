@@ -28,11 +28,16 @@ function SRIHashAssets(inputNodes, options) {
   }
 
   CachingWriter.call(this, nodes, {
-    cacheInclude: [
-      /\.html$/,
-      /\.js$/,
-      /\.css$/
-    ]
+    // disabled to ensure all files are synced forward
+    // I suspect additions to BCW are needed, or a slightly different plugin
+    // to handle this more elegantly.
+    // Leaving this comment here as a reminder. -sp
+    //
+    // cacheInclude: [
+    //   /\.html$/,
+    //   /\.js$/,
+    //   /\.css$/
+    // ]
   });
 
   this.options.paranoiaCheck = this.options.paranoiaCheck || true;

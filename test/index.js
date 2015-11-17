@@ -32,6 +32,7 @@ describe('broccoli-sri-hash', function () {
       assert.equal(actual, expected);
 
       assert.deepEqual(walkSync(output.directory), [
+        'favicon.png',
         'moment-with-locales.min.js',
         'omg.png',
         'other.css',
@@ -50,6 +51,7 @@ describe('broccoli-sri-hash', function () {
       fs.writeFileSync('test/fixtures/input/other.css', '* { display: none; }');
 
       assert.deepEqual(walkSync(output.directory), [
+        'favicon.png',
         'moment-with-locales.min.js',
         'omg.png',
         'other.css',
@@ -63,6 +65,7 @@ describe('broccoli-sri-hash', function () {
       var expected = file('test/fixtures/output2/test.html');
 
       assert.deepEqual(walkSync(output.directory), [
+        'favicon.png',
         'moment-with-locales.min.js',
         'omg.png',
         'other.css',
