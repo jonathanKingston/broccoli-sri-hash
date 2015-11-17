@@ -1,19 +1,57 @@
 var chai = require('chai');
 var assert = chai.assert;
 var fs = require('fs');
+var broccoli = require('broccoli');
+var plugin = require('../');
+var lint = require('mocha-eslint');
+
+function file(path) {
+  return fs.readFileSync(path,  'UTF-8').trim();;
+}
 
 describe('broccoli-sri-hash', function () {
+  var builder;
 
-  it('rule outputs match', function () {
-
-    var fileTmpContents = fs.readFileSync('tmp/output/test.html', {encoding: 'utf8'});
-    var fileContents = fs.readFileSync('test/fixtures/output/test.html', {encoding: 'utf8'});
-
-    assert.equal(fileTmpContents.trim(), fileContents.trim());
+  before(function() {
+    builder = new broccoli.Builder(plugin('test/fixtures/input', {
+      prefix: 'https://example.com/',
+      crossorigin: 'anonymous'
+    }));
   });
 
-  it('Must lint', function () {
-    var fileTmpContents = fs.readFileSync('tmp/lint-out', {encoding: 'utf8'});
-    assert.notMatch(fileTmpContents, /[0-9]+\s+problems?\s\([0-9]+\serrors?,\s[0-9]+\swarnings?\)/)
+  after(function() {
+    builder.cleanup();
   });
+
+  it('rule outputs match (initial build)', function () {
+    return builder.build().then(function(output) {
+      var actual = file(output.directory + '/test.html');
+      var expected = file('test/fixtures/output/test.html');
+
+      assert.equal(actual, expected);
+    });
+  });
+
+  it('rule outputs match (rebuild)', function () {
+    var pathToMutate = 'test/fixtures/input/other.css';
+    var originalContent = fs.readFileSync(pathToMutate);
+    return builder.build().then(function(output) {
+      // mutate input File
+      fs.writeFileSync('test/fixtures/input/other.css', '* { display: none; }');
+
+      return builder.build();
+    }).then(function(output) {
+      var actual = file(output.directory + '/test.html');
+      var expected = file('test/fixtures/output2/test.html');
+
+      assert.equal(actual, expected);
+    }).finally(function() {
+      fs.writeFileSync(pathToMutate, originalContent);
+    });
+  });
+
+  lint([
+    'index.js',
+    'tests/index.js'
+  ]);
 });

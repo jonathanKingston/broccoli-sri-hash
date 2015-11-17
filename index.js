@@ -2,10 +2,18 @@ var CachingWriter = require('broccoli-caching-writer');
 var sriToolbox = require('sri-toolbox');
 var fs = require('fs');
 var crypto = require('crypto');
-var styleCheck = /\srel=["\'][^"]*stylesheet[^"]*["\']/;
-var srcCheck = /\ssrc=["\']([^"\']+)["\']/;
-var hrefCheck = /\shref=["\']([^"\']+)["\']/;
+var symlinkOrCopy = require('symlink-or-copy').sync;
 var Promise = require('rsvp').Promise; // node 0.10
+var path = require('path');
+
+var STYLE_CHECK = /\srel=["\'][^"]*stylesheet[^"]*["\']/;
+var SRC_CHECK = /\ssrc=["\']([^"\']+)["\']/;
+var HREF_CHECK = /\shref=["\']([^"\']+)["\']/;
+var SCRIPT_CHECK = new RegExp('<script[^>]*src=["\']([^"]*)["\'][^>]*>', 'g');
+var LINT_CHECK = new RegExp('<link[^>]*href=["\']([^"]*)["\'][^>]*>', 'g');
+var INTEGRITY_CHECK = new RegExp('integrity=["\']');
+var CROSS_ORIGIN_CHECK = new RegExp('crossorigin=["\']([^"\']+)["\']');
+var MD5_CHECK = /^(.*)[-]([a-z0-9]{32})([.].*)$/;
 
 function SRIHashAssets(inputNodes, options) {
   if (!(this instanceof SRIHashAssets)) {
@@ -21,9 +29,9 @@ function SRIHashAssets(inputNodes, options) {
 
   CachingWriter.call(this, nodes, {
     cacheInclude: [
-      /(.*)\.html$/,
-      /(.*)\.js$/,
-      /(.*)\.css$/
+      /\.html$/,
+      /\.js$/,
+      /\.css$/
     ]
   });
 
@@ -40,18 +48,12 @@ function SRIHashAssets(inputNodes, options) {
 
 SRIHashAssets.prototype = Object.create(CachingWriter.prototype);
 SRIHashAssets.prototype.constructor = SRIHashAssets;
-/*
-SRIHashAssets.prototype.extensions = ['html'];
-SRIHashAssets.prototype.targetExtension = 'html';
-*/
 
-SRIHashAssets.prototype.addSRI = function addSRI(string, file) {
-  var that = this;
-  var scriptCheck = new RegExp('<script[^>]*src=["\']([^"]*)["\'][^>]*>', 'g');
-  var linkCheck = new RegExp('<link[^>]*href=["\']([^"]*)["\'][^>]*>', 'g');
+SRIHashAssets.prototype.addSRI = function addSRI(string, srcDir) {
+  var plugin = this;
 
-  return string.replace(scriptCheck, function srcMatch(match) {
-    var src = match.match(srcCheck);
+  return string.replace(SCRIPT_CHECK, function srcMatch(match) {
+    var src = match.match(SRC_CHECK);
     var filePath;
 
     if (!src) {
@@ -60,12 +62,11 @@ SRIHashAssets.prototype.addSRI = function addSRI(string, file) {
 
     filePath = src[1];
 
-    return that.mungeOutput(match, filePath, file);
-  }).replace(linkCheck, function hrefMatch(match) {
-    var href = match.match(hrefCheck);
-    var isStyle = styleCheck.test(match);
+    return plugin.mungeOutput(match, filePath, srcDir);
+  }).replace(LINT_CHECK, function hrefMatch(match) {
+    var href = match.match(HREF_CHECK);
+    var isStyle = STYLE_CHECK.test(match);
     var filePath;
-
 
     if (!isStyle || !href) {
       return match;
@@ -73,7 +74,7 @@ SRIHashAssets.prototype.addSRI = function addSRI(string, file) {
 
     filePath = href[1];
 
-    return that.mungeOutput(match, filePath, file);
+    return plugin.mungeOutput(match, filePath, srcDir);
   });
 };
 
@@ -85,6 +86,7 @@ SRIHashAssets.prototype.readFile = function readFile(dirname, file) {
   } catch(e) {
     return null;
   }
+
   return assetSource;
 };
 
@@ -114,7 +116,6 @@ SRIHashAssets.prototype.paranoiaCheck = function paranoiaCheck(assetSource) {
 };
 
 SRIHashAssets.prototype.generateIntegrity = function generateIntegrity(output, file, dirname, external) {
-  var crossoriginCheck = new RegExp('crossorigin=["\']([^"\']+)["\']');
   var assetSource = this.readFile(dirname, file);
   var selfCloseCheck = /\s*\/>$/;
   var integrity;
@@ -137,7 +138,7 @@ SRIHashAssets.prototype.generateIntegrity = function generateIntegrity(output, f
   append = ' integrity="' + integrity + '"';
 
   if (external && this.options.crossorigin) {
-    if (!crossoriginCheck.test(output)) {
+    if (!CROSS_ORIGIN_CHECK.test(output)) {
       append = append + ' crossorigin="' + this.options.crossorigin + '" ';
     }
   }
@@ -151,8 +152,7 @@ SRIHashAssets.prototype.generateIntegrity = function generateIntegrity(output, f
 };
 
 SRIHashAssets.prototype.checkExternal = function checkExternal(output, file, dirname) {
-  var md5Check = /^(.*)[-]([a-z0-9]{32})([.].*)$/;
-  var md5Matches = file.match(md5Check);
+  var md5Matches = file.match(MD5_CHECK);
   var md5sum = crypto.createHash('md5');
   var assetSource;
   var filePath;
@@ -175,6 +175,7 @@ SRIHashAssets.prototype.checkExternal = function checkExternal(output, file, dir
       return output;
     }
   }
+
   md5sum.update(assetSource);
   if (md5Matches[2] === md5sum.digest('hex')) {
     return this.generateIntegrity(output, filePath, dirname, true);
@@ -182,35 +183,46 @@ SRIHashAssets.prototype.checkExternal = function checkExternal(output, file, dir
   return output;
 };
 
-SRIHashAssets.prototype.mungeOutput = function mungeOutput(output, filePath, file) {
-  var integrityCheck = new RegExp('integrity=["\']');
+SRIHashAssets.prototype.mungeOutput = function mungeOutput(output, filePath, srcDir) {
   var newOutput = output;
 
   if (/^https?:\/\//.test(filePath)) {
-    return this.checkExternal(output, filePath, file);
+    return this.checkExternal(output, filePath, srcDir);
   }
-  if (!(integrityCheck.test(output))) {
-    newOutput = this.generateIntegrity(output, filePath, file);
+
+  if (!INTEGRITY_CHECK.test(output)) {
+    newOutput = this.generateIntegrity(output, filePath, srcDir);
   }
   return newOutput;
 };
 
-SRIHashAssets.prototype.processFile = function processFile(srcDir, destDir, relativePath) {
-  var fileContent = fs.readFileSync(srcDir + '/' + relativePath);
-  var that = this;
+SRIHashAssets.prototype.processHTMLFile = function processFile(entry) {
+  var srcDir = path.dirname(entry.fullPath);
+  var fileContent = this.addSRI(fs.readFileSync(entry.fullPath,'UTF-8'), srcDir);
 
-  this._srcDir = srcDir;
-  fileContent = this.addSRI(fileContent.toString(), srcDir);
+  fs.writeFileSync(this.outputPath + '/' + entry.relativePath, fileContent);
+};
 
-  return Promise.resolve().then(function writeFileOutput() {
-    var outputPath = that.getDestFilePath(relativePath);
-
-    fs.writeFileSync(destDir + '/' + outputPath, fileContent);
-  });
+SRIHashAssets.prototype.processOtherFile = function(entry) {
+  symlinkOrCopy(entry.fullPath, this.outputPath + '/' + entry.relativePath);
 };
 
 SRIHashAssets.prototype.build = function () {
-  // TODO call processFile here this.listEntries();
+  var html = [];
+  var other = [];
+
+  this.listEntries().forEach(function(entry) {
+    if (/\.html$/.test(entry.relativePath)) {
+      html.push(entry);
+    } else {
+      other.push(entry);
+    }
+  });
+
+  return Promise.all([
+    Promise.all(html.map(this.processHTMLFile.bind(this))),
+    Promise.all(other.map(this.processOtherFile.bind(this)))
+  ]);
 };
 
 module.exports = SRIHashAssets;

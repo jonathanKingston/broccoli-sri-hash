@@ -1,5 +1,4 @@
 {
-  "extends": "nightmare-mode",
   "env": {
     "node": true
   },
