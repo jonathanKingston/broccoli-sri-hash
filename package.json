@@ -16,16 +16,14 @@
   },
   "license": "MIT",
   "dependencies": {
-    "broccoli": "^0.16.3",
     "broccoli-caching-writer": "^2.2.0",
-    "rsvp": "^3.0.0",
+    "rsvp": "^3.1.0",
     "snyk": "^1.1.0",
     "sri-toolbox": "^0.2.0",
     "symlink-or-copy": "^1.0.1"
   },
   "devDependencies": {
     "broccoli": "^0.16.8",
-    "broccoli-cli": "^1.0.0",
     "chai": "^3.4.1",
     "eslint": "^1.9.0",
     "eslint-config-nightmare-mode": "0.3.0",
