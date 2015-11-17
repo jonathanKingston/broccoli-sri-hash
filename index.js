@@ -14,6 +14,7 @@ var LINT_CHECK = new RegExp('<link[^>]*href=["\']([^"]*)["\'][^>]*>', 'g');
 var INTEGRITY_CHECK = new RegExp('integrity=["\']');
 var CROSS_ORIGIN_CHECK = new RegExp('crossorigin=["\']([^"\']+)["\']');
 var MD5_CHECK = /^(.*)[-]([a-z0-9]{32})([.].*)$/;
+var mkdirp = require('mkdirp');
 
 function SRIHashAssets(inputNodes, options) {
   if (!(this instanceof SRIHashAssets)) {
@@ -204,12 +205,17 @@ SRIHashAssets.prototype.mungeOutput = function mungeOutput(output, filePath, src
 SRIHashAssets.prototype.processHTMLFile = function processFile(entry) {
   var srcDir = path.dirname(entry.fullPath);
   var fileContent = this.addSRI(fs.readFileSync(entry.fullPath,'UTF-8'), srcDir);
+  var fullPath = this.outputPath + '/' + entry.relativePath;
 
-  fs.writeFileSync(this.outputPath + '/' + entry.relativePath, fileContent);
+  mkdirp.sync(path.dirname(fullPath));
+
+  fs.writeFileSync(fullPath, fileContent);
 };
 
 SRIHashAssets.prototype.processOtherFile = function(entry) {
-  symlinkOrCopy(entry.fullPath, this.outputPath + '/' + entry.relativePath);
+  var fullPath = this.outputPath + '/' + entry.relativePath;
+  mkdirp.sync(path.dirname(fullPath));
+  symlinkOrCopy(entry.fullPath, fullPath);
 };
 
 SRIHashAssets.prototype.build = function () {

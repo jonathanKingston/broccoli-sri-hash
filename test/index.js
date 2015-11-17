@@ -33,6 +33,8 @@ describe('broccoli-sri-hash', function () {
 
       assert.deepEqual(walkSync(output.directory), [
         'favicon.png',
+        'foo/',
+        'foo/test.html',
         'moment-with-locales.min.js',
         'omg.png',
         'other.css',
@@ -52,6 +54,8 @@ describe('broccoli-sri-hash', function () {
 
       assert.deepEqual(walkSync(output.directory), [
         'favicon.png',
+        'foo/',
+        'foo/test.html',
         'moment-with-locales.min.js',
         'omg.png',
         'other.css',
@@ -66,6 +70,8 @@ describe('broccoli-sri-hash', function () {
 
       assert.deepEqual(walkSync(output.directory), [
         'favicon.png',
+        'foo/',
+        'foo/test.html',
         'moment-with-locales.min.js',
         'omg.png',
         'other.css',
