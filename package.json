@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "lint": "eslint index.js",
-    "test": "snyk test && mocha test",
-    "test:fast": "mocha test",
+    "test": "mocha test",
     "test:debug": "mocha debug test"
   },
   "author": "Jonathan Kingston",
