@@ -1,3 +1,7 @@
+# 1.2.0
+
+- Update to use broccoli-caching-writer as a base class. Fixes issues with more agressive caching added in recent broccoli-filter versions.
+
 # 1.1.1
 - @kellyselden fixes for node 0.10
   -  windows cmd fix
