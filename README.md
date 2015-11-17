@@ -17,7 +17,7 @@ This plugin looks at an apps html files to rewrite their content with integrity 
 - **paranoiaCheck** - true by default, this turns off the integrity attribute if any Unicode is found within the file.
 
 ### Example
-```
+```js
 var sriTree = sri('path/to/code, {
   prefix: 'https://example.com/',
   crossorigin: 'anonymous'
