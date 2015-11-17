@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "lint": "eslint index.js",
-    "test": "rm -rf tmp && mkdir tmp && npm run lint > tmp/lint-out && broccoli build tmp/output && mocha"
+    "test": "snyk test && rm -rf tmp && mkdir tmp && npm run lint > tmp/lint-out && broccoli build tmp/output && mocha"
   },
   "author": "Jonathan Kingston",
   "repository": {
@@ -15,15 +15,16 @@
   "license": "MIT",
   "dependencies": {
     "broccoli": "^0.16.3",
-    "broccoli-filter": "^1.1.0",
+    "broccoli-filter": "^1.2.2",
     "rsvp": "^3.0.0",
-    "sri-toolbox": "^0.2.0"
+    "sri-toolbox": "^0.2.0",
+    "snyk": "^1.1.0"
   },
   "devDependencies": {
     "broccoli-cli": "^1.0.0",
-    "chai": "^3.0.0",
-    "eslint": "^1.0.0",
-    "eslint-config-nightmare-mode": "0.1.0",
-    "mocha": "^2.2.5"
+    "chai": "^3.4.1",
+    "eslint": "^1.9.0",
+    "eslint-config-nightmare-mode": "0.3.0",
+    "mocha": "^2.3.4"
   }
 }
