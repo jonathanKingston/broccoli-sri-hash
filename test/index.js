@@ -26,8 +26,15 @@ describe('broccoli-sri-hash', function () {
 
   it('rule outputs match (initial build)', function () {
     return builder.build().then(function(output) {
-      var actual = file(output.directory + '/test.html');
-      var expected = file('test/fixtures/output/test.html');
+      var actual, expected;
+
+      actual = file(output.directory + '/test.html');
+      expected = file('test/fixtures/output/test.html');
+
+      assert.equal(actual, expected);
+
+      actual = file(output.directory + '/foo/test.html');
+      expected = file('test/fixtures/output/foo/test.html');
 
       assert.equal(actual, expected);
 
