@@ -9,6 +9,7 @@ var path = require('path');
 var STYLE_CHECK = /\srel=["\'][^"]*stylesheet[^"]*["\']/;
 var SRC_CHECK = /\ssrc=["\']([^"\']+)["\']/;
 var HREF_CHECK = /\shref=["\']([^"\']+)["\']/;
+var BASE_CHECK = new RegExp('<base[^>]*href=["\']([^"]*)["\'][^>]*>', 'g');
 var SCRIPT_CHECK = new RegExp('<script[^>]*src=["\']([^"]*)["\'][^>]*>', 'g');
 var LINT_CHECK = new RegExp('<link[^>]*href=["\']([^"]*)["\'][^>]*>', 'g');
 var INTEGRITY_CHECK = new RegExp('integrity=["\']');
@@ -55,10 +56,26 @@ function SRIHashAssets(inputNodes, options) {
 SRIHashAssets.prototype = Object.create(CachingWriter.prototype);
 SRIHashAssets.prototype.constructor = SRIHashAssets;
 
+SRIHashAssets.prototype.getBaseHREF = function getBaseHREF(string) {
+  var baseTag = string.match(BASE_CHECK);
+  if (baseTag && baseTag[0]) {
+    var href = baseTag[0].match(HREF_CHECK);
+    var relativePath = href && href[1];
+
+    if (!relativePath) { return null; }
+
+    return this.inputPaths[0] + relativePath;
+  }
+
+  return null;
+};
+
 SRIHashAssets.prototype.addSRI = function addSRI(string, srcDir) {
   var plugin = this;
+  var base = this.getBaseHREF(string);
 
   return string.replace(SCRIPT_CHECK, function srcMatch(match) {
+
     var src = match.match(SRC_CHECK);
     var filePath;
 
@@ -68,7 +85,7 @@ SRIHashAssets.prototype.addSRI = function addSRI(string, srcDir) {
 
     filePath = src[1];
 
-    return plugin.mungeOutput(match, filePath, srcDir);
+    return plugin.mungeOutput(match, filePath, base || srcDir);
   }).replace(LINT_CHECK, function hrefMatch(match) {
     var href = match.match(HREF_CHECK);
     var isStyle = STYLE_CHECK.test(match);
@@ -80,7 +97,7 @@ SRIHashAssets.prototype.addSRI = function addSRI(string, srcDir) {
 
     filePath = href[1];
 
-    return plugin.mungeOutput(match, filePath, srcDir);
+    return plugin.mungeOutput(match, filePath, base || srcDir);
   });
 };
 
@@ -199,6 +216,7 @@ SRIHashAssets.prototype.mungeOutput = function mungeOutput(output, filePath, src
   if (!INTEGRITY_CHECK.test(output)) {
     newOutput = this.generateIntegrity(output, filePath, srcDir);
   }
+
   return newOutput;
 };
 
