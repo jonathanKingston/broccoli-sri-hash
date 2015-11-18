@@ -64,6 +64,9 @@ SRIHashAssets.prototype.getBaseHREF = function getBaseHREF(string) {
 
     if (!relativePath) { return null; }
 
+    // do not support `<base href="../../">`
+    if (!relativePath[0] === '/') { return null; }
+
     return this.inputPaths[0] + relativePath;
   }
 
