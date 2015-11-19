@@ -18,7 +18,6 @@
     "broccoli-caching-writer": "^2.2.0",
     "mkdirp": "^0.5.1",
     "rsvp": "^3.1.0",
-    "snyk": "^1.1.0",
     "sri-toolbox": "^0.2.0",
     "symlink-or-copy": "^1.0.1"
   },
@@ -29,6 +28,7 @@
     "eslint-config-nightmare-mode": "0.3.0",
     "mocha": "^2.3.4",
     "mocha-eslint": "^1.0.0",
+    "snyk": "^1.1.0",
     "walk-sync": "^0.2.6"
   }
 }
