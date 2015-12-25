@@ -42,7 +42,7 @@ function SRIHashAssets(inputNodes, options) {
     // ]
   });
 
-  this.options.paranoiaCheck = this.options.paranoiaCheck || true;
+  this.options.paranoiaCheck = this.options.paranoiaCheck || false;
 
   if ('origin' in this.options) {
     if ('prefix' in this.options && !('crossorigin' in this.options)) {
@@ -117,7 +117,6 @@ SRIHashAssets.prototype.readFile = function readFile(dirname, file) {
 };
 
 /*
-  This check is always called (at the moment).
   If 'paranoiaCheck' is enabled then it will check a file only contains ASCII characters
     - will return true if paranoiaCheck is disabled
     - will return true if ASCII only
