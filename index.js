@@ -108,7 +108,7 @@ SRIHashAssets.prototype.readFile = function readFile(dirname, file) {
   var assetSource;
 
   try {
-    assetSource = fs.readFileSync(dirname + '/' + file).toString();
+    assetSource = fs.readFileSync(dirname + '/' + file, 'utf8');
   } catch(e) {
     return null;
   }
@@ -201,7 +201,7 @@ SRIHashAssets.prototype.checkExternal = function checkExternal(output, file, dir
     }
   }
 
-  md5sum.update(assetSource);
+  md5sum.update(assetSource, 'utf8');
   if (md5Matches[2] === md5sum.digest('hex')) {
     return this.generateIntegrity(output, filePath, dirname, true);
   }
@@ -224,7 +224,7 @@ SRIHashAssets.prototype.mungeOutput = function mungeOutput(output, filePath, src
 
 SRIHashAssets.prototype.processHTMLFile = function processFile(entry) {
   var srcDir = path.dirname(entry.fullPath);
-  var fileContent = this.addSRI(fs.readFileSync(entry.fullPath,'UTF-8'), srcDir);
+  var fileContent = this.addSRI(fs.readFileSync(entry.fullPath, 'utf8'), srcDir);
   var fullPath = this.outputPath + '/' + entry.relativePath;
 
   mkdirp.sync(path.dirname(fullPath));
