@@ -42,7 +42,13 @@ function SRIHashAssets(inputNodes, options) {
     // ]
   });
 
-  this.options.paranoiaCheck = this.options.paranoiaCheck || false;
+  if (!('paranoiaCheck' in this.options)) {
+    this.options.paranoiaCheck = false;
+  }
+
+  if (!('fingerprintCheck' in this.options)) {
+    this.options.fingerprintCheck = true;
+  }
 
   if ('origin' in this.options) {
     if ('prefix' in this.options && !('crossorigin' in this.options)) {
@@ -202,7 +208,7 @@ SRIHashAssets.prototype.checkExternal = function checkExternal(output, file, dir
   }
 
   md5sum.update(assetSource, 'utf8');
-  if (md5Matches[2] === md5sum.digest('hex')) {
+  if (this.options.fingerprintCheck === false || md5Matches[2] === md5sum.digest('hex')) {
     return this.generateIntegrity(output, filePath, dirname, true);
   }
   return output;
