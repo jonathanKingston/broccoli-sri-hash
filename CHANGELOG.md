@@ -1,6 +1,23 @@
+# 2.1.0
+
+- Adding in fixes for utf8 streams
+- Adding fingerprintCheck for disabling md5 file checking
+
+# 2.0.0
+
+- Removing paranoiaCheck as a default
+
+# 1.2.2
+
+- Removal of snyk as came out in ember setups
+
+# 1.2.1
+
+- Base tag fixes
+
 # 1.2.0
 
-- Update to use broccoli-caching-writer as a base class. Fixes issues with more agressive caching added in recent broccoli-filter versions.
+- Update to use broccoli-caching-writer as a base class. Fixes issues with more aggressive caching added in recent broccoli-filter versions.
 
 # 1.1.1
 - @kellyselden fixes for node 0.10
