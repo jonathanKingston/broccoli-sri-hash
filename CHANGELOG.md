@@ -1,3 +1,11 @@
+# 2.1.1
+
+- Updating linting and snyk dev dependency packages
+  - eslint@2.5.1
+  - eslint-config-nightmare-mode@2.3.0
+  - mocha-eslint@2.0.2
+  - snyk@1.13.1
+
 # 2.1.0
 
 - Adding in fixes for utf8 streams
