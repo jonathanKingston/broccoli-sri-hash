@@ -1,6 +1,6 @@
 {
   "name": "broccoli-sri-hash",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Generates SRI hashes for html files",
   "main": "index.js",
   "scripts": {
@@ -24,11 +24,11 @@
   "devDependencies": {
     "broccoli": "^0.16.8",
     "chai": "^3.4.1",
-    "eslint": "^1.9.0",
-    "eslint-config-nightmare-mode": "0.3.0",
+    "eslint": "^2.5.1",
+    "eslint-config-nightmare-mode": "^2.3.0",
     "mocha": "^2.3.4",
-    "mocha-eslint": "^1.0.0",
-    "snyk": "^1.1.0",
+    "mocha-eslint": "^2.0.2",
+    "snyk": "^1.13.1",
     "walk-sync": "^0.2.6"
   }
 }
