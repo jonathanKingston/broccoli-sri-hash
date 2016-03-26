@@ -1,3 +1,7 @@
+# 2.1.2
+
+- Reenable snyk test
+
 # 2.1.1
 
 - Updating linting and snyk dev dependency packages
