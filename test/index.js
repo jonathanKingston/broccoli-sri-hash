@@ -38,6 +38,11 @@ describe('broccoli-sri-hash', function () {
 
       assert.equal(actual, expected);
 
+      actual = file(output.directory + '/two/deep/test.html');
+      expected = file('test/fixtures/output/two/deep/test.html');
+
+      assert.equal(actual, expected);
+
       assert.deepEqual(walkSync(output.directory), [
         'favicon.png',
         'foo/',
@@ -47,6 +52,9 @@ describe('broccoli-sri-hash', function () {
         'other.css',
         'test.html',
         'thing.js',
+        'two/',
+        'two/deep/',
+        'two/deep/test.html',
         'unicode-chars.js'
       ]);
     });
@@ -68,6 +76,9 @@ describe('broccoli-sri-hash', function () {
         'other.css',
         'test.html',
         'thing.js',
+        'two/',
+        'two/deep/',
+        'two/deep/test.html',
         'unicode-chars.js'
       ]);
       return builder.build();
@@ -84,6 +95,9 @@ describe('broccoli-sri-hash', function () {
         'other.css',
         'test.html',
         'thing.js',
+        'two/',
+        'two/deep/',
+        'two/deep/test.html',
         'unicode-chars.js'
       ]);
       assert.equal(actual, expected);

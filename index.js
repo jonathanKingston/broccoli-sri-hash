@@ -9,7 +9,6 @@ var path = require('path');
 var STYLE_CHECK = /\srel=["\'][^"]*stylesheet[^"]*["\']/;
 var SRC_CHECK = /\ssrc=["\']([^"\']+)["\']/;
 var HREF_CHECK = /\shref=["\']([^"\']+)["\']/;
-var BASE_CHECK = new RegExp('<base[^>]*href=["\']([^"]*)["\'][^>]*>', 'g');
 var SCRIPT_CHECK = new RegExp('<script[^>]*src=["\']([^"]*)["\'][^>]*>', 'g');
 var LINT_CHECK = new RegExp('<link[^>]*href=["\']([^"]*)["\'][^>]*>', 'g');
 var INTEGRITY_CHECK = new RegExp('integrity=["\']');
@@ -62,26 +61,8 @@ function SRIHashAssets(inputNodes, options) {
 SRIHashAssets.prototype = Object.create(CachingWriter.prototype);
 SRIHashAssets.prototype.constructor = SRIHashAssets;
 
-SRIHashAssets.prototype.getBaseHREF = function getBaseHREF(string) {
-  var baseTag = string.match(BASE_CHECK);
-  if (baseTag && baseTag[0]) {
-    var href = baseTag[0].match(HREF_CHECK);
-    var relativePath = href && href[1];
-
-    if (!relativePath) { return null; }
-
-    // do not support `<base href="../../">`
-    if (!relativePath[0] === '/') { return null; }
-
-    return this.inputPaths[0] + relativePath;
-  }
-
-  return null;
-};
-
-SRIHashAssets.prototype.addSRI = function addSRI(string, srcDir) {
+SRIHashAssets.prototype.addSRI = function addSRI(string) {
   var plugin = this;
-  var base = this.getBaseHREF(string);
 
   return string.replace(SCRIPT_CHECK, function srcMatch(match) {
 
@@ -94,7 +75,7 @@ SRIHashAssets.prototype.addSRI = function addSRI(string, srcDir) {
 
     filePath = src[1];
 
-    return plugin.mungeOutput(match, filePath, base || srcDir);
+    return plugin.mungeOutput(match, filePath);
   }).replace(LINT_CHECK, function hrefMatch(match) {
     var href = match.match(HREF_CHECK);
     var isStyle = STYLE_CHECK.test(match);
@@ -106,15 +87,15 @@ SRIHashAssets.prototype.addSRI = function addSRI(string, srcDir) {
 
     filePath = href[1];
 
-    return plugin.mungeOutput(match, filePath, base || srcDir);
+    return plugin.mungeOutput(match, filePath);
   });
 };
 
-SRIHashAssets.prototype.readFile = function readFile(dirname, file) {
+SRIHashAssets.prototype.readFile = function readFile(file) {
   var assetSource;
 
   try {
-    assetSource = fs.readFileSync(dirname + '/' + file, 'utf8');
+    assetSource = fs.readFileSync(this.inputPaths[0] + '/' + file, 'utf8');
   } catch(e) {
     return null;
   }
@@ -146,8 +127,8 @@ SRIHashAssets.prototype.paranoiaCheck = function paranoiaCheck(assetSource) {
   return checkResult;
 };
 
-SRIHashAssets.prototype.generateIntegrity = function generateIntegrity(output, file, dirname, external) {
-  var assetSource = this.readFile(dirname, file);
+SRIHashAssets.prototype.generateIntegrity = function generateIntegrity(output, file, external) {
+  var assetSource = this.readFile(file);
   var selfCloseCheck = /\s*\/>$/;
   var integrity;
   var append;
@@ -182,7 +163,7 @@ SRIHashAssets.prototype.generateIntegrity = function generateIntegrity(output, f
   return outputWithIntegrity;
 };
 
-SRIHashAssets.prototype.checkExternal = function checkExternal(output, file, dirname) {
+SRIHashAssets.prototype.checkExternal = function checkExternal(output, file) {
   var md5Matches = file.match(MD5_CHECK);
   var md5sum = crypto.createHash('md5');
   var assetSource;
@@ -198,10 +179,10 @@ SRIHashAssets.prototype.checkExternal = function checkExternal(output, file, dir
     return output;
   }
 
-  assetSource = this.readFile(dirname, filePath);
+  assetSource = this.readFile(filePath);
   if (assetSource === null) {
     filePath = md5Matches[1].replace(this.options.prefix, '') + md5Matches[3];
-    assetSource = this.readFile(dirname, filePath);
+    assetSource = this.readFile(filePath);
     if (assetSource === null) {
       return output;
     }
@@ -209,28 +190,27 @@ SRIHashAssets.prototype.checkExternal = function checkExternal(output, file, dir
 
   md5sum.update(assetSource, 'utf8');
   if (this.options.fingerprintCheck === false || md5Matches[2] === md5sum.digest('hex')) {
-    return this.generateIntegrity(output, filePath, dirname, true);
+    return this.generateIntegrity(output, filePath, true);
   }
   return output;
 };
 
-SRIHashAssets.prototype.mungeOutput = function mungeOutput(output, filePath, srcDir) {
+SRIHashAssets.prototype.mungeOutput = function mungeOutput(output, filePath) {
   var newOutput = output;
 
   if (/^https?:\/\//.test(filePath)) {
-    return this.checkExternal(output, filePath, srcDir);
+    return this.checkExternal(output, filePath);
   }
 
   if (!INTEGRITY_CHECK.test(output)) {
-    newOutput = this.generateIntegrity(output, filePath, srcDir);
+    newOutput = this.generateIntegrity(output, filePath);
   }
 
   return newOutput;
 };
 
 SRIHashAssets.prototype.processHTMLFile = function processFile(entry) {
-  var srcDir = path.dirname(entry.fullPath);
-  var fileContent = this.addSRI(fs.readFileSync(entry.fullPath, 'utf8'), srcDir);
+  var fileContent = this.addSRI(fs.readFileSync(entry.fullPath, 'utf8'));
   var fullPath = this.outputPath + '/' + entry.relativePath;
 
   mkdirp.sync(path.dirname(fullPath));
