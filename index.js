@@ -57,6 +57,10 @@ function SRIHashAssets(inputNodes, options) {
       }
     }
   }
+
+  if ('rootURL' in this.options) {
+    this._rootURL = new RegExp('^' + this.options.rootURL);
+  }
 }
 
 SRIHashAssets.prototype = Object.create(CachingWriter.prototype);
@@ -84,7 +88,6 @@ SRIHashAssets.prototype.addSRI = function addSRI(string, srcDir) {
   var base = this.getBaseHREF(string);
 
   return string.replace(SCRIPT_CHECK, function srcMatch(match) {
-
     var src = match.match(SRC_CHECK);
     var filePath;
 
@@ -93,6 +96,10 @@ SRIHashAssets.prototype.addSRI = function addSRI(string, srcDir) {
     }
 
     filePath = src[1];
+
+    if (plugin._rootURL) {
+      filePath = filePath.replace(plugin._rootURL, '');
+    }
 
     return plugin.mungeOutput(match, filePath, base || srcDir);
   }).replace(LINT_CHECK, function hrefMatch(match) {
@@ -105,6 +112,10 @@ SRIHashAssets.prototype.addSRI = function addSRI(string, srcDir) {
     }
 
     filePath = href[1];
+
+    if (plugin._rootURL) {
+      filePath = filePath.replace(plugin._rootURL, '');
+    }
 
     return plugin.mungeOutput(match, filePath, base || srcDir);
   });
