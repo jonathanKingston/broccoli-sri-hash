@@ -6,12 +6,12 @@ var symlinkOrCopy = require('symlink-or-copy').sync;
 var Promise = require('rsvp').Promise; // node 0.10
 var path = require('path');
 
-var STYLE_CHECK = /\srel=["\'][^"]*stylesheet[^"]*["\']/;
+var STYLE_CHECK = /\srel=["\'][^"\']*stylesheet[^"\']*["\']/;
 var SRC_CHECK = /\ssrc=["\']([^"\']+)["\']/;
 var HREF_CHECK = /\shref=["\']([^"\']+)["\']/;
-var BASE_CHECK = new RegExp('<base[^>]*href=["\']([^"]*)["\'][^>]*>', 'g');
-var SCRIPT_CHECK = new RegExp('<script[^>]*src=["\']([^"]*)["\'][^>]*>', 'g');
-var LINT_CHECK = new RegExp('<link[^>]*href=["\']([^"]*)["\'][^>]*>', 'g');
+var BASE_CHECK = new RegExp('<base[^>]*href=["\']([^"\']*)["\'][^>]*>', 'g');
+var SCRIPT_CHECK = new RegExp('<script[^>]*src=["\']([^"\']*)["\'][^>]*>', 'g');
+var LINT_CHECK = new RegExp('<link[^>]*href=["\']([^"\']*)["\'][^>]*>', 'g');
 var INTEGRITY_CHECK = new RegExp('integrity=["\']');
 var CROSS_ORIGIN_CHECK = new RegExp('crossorigin=["\']([^"\']+)["\']');
 var MD5_CHECK = /^(.*)[-]([a-z0-9]{32})([.].*)$/;
